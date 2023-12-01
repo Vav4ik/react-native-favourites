@@ -7,16 +7,14 @@ import LocationPicker from "./LocationPicker";
 
 const PlaceForm = () => {
   const [enteredTitle, setEnteredTitle] = useState("");
-  const changeTitleHandler = (enteredText) => {
-    setEnteredTitle(enteredText);
-  };
+
   return (
     <ScrollView style={styles.form}>
       <View>
         <Text style={styles.label}>Title</Text>
         <TextInput
           style={styles.input}
-          onChange={changeTitleHandler}
+          onChange={(text) => setEnteredTitle(text)}
           value={enteredTitle}
         />
       </View>
