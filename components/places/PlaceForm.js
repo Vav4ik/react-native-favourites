@@ -14,7 +14,7 @@ const PlaceForm = () => {
         <Text style={styles.label}>Title</Text>
         <TextInput
           style={styles.input}
-          onChange={(text) => setEnteredTitle(text)}
+          onChangeText={setEnteredTitle}
           value={enteredTitle}
         />
       </View>
