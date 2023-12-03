@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import {
   getCurrentPositionAsync,
   PermissionStatus,
   useForegroundPermissions,
 } from "expo-location";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 
 import { Colors } from "../../constants/colors";
 import OutlinedButton from "../../UI/OutlinedButton";
@@ -13,8 +17,22 @@ import { getMapPreview } from "../../utils/location";
 
 const LocationPicker = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  //in stack navigation going back from map doesn't re-render a screen component,
+  //so we use useISFocused hook that returns true when focuse on this component
+  const isFocused = useIsFocused();
 
   const [pickedLocation, setPickedLocation] = useState();
+
+  useEffect(() => {
+    if (isFocused && route.params) {
+      const mapPickedLocation = {
+        lat: route.params.pickedLat,
+        lng: route.params.pickedLng,
+      };
+      setPickedLocation(mapPickedLocation);
+    }
+  }, [route, isFocused]);
 
   const [locationPermissionInfo, requestPermission] =
     useForegroundPermissions();
