@@ -15,7 +15,7 @@ import { Colors } from "../../constants/colors";
 import OutlinedButton from "../../UI/OutlinedButton";
 import { getMapPreview } from "../../utils/location";
 
-const LocationPicker = () => {
+const LocationPicker = ({ onPickLocation }) => {
   const navigation = useNavigation();
   const route = useRoute();
   //in stack navigation going back from map doesn't re-render a screen component,
@@ -33,6 +33,11 @@ const LocationPicker = () => {
       setPickedLocation(mapPickedLocation);
     }
   }, [route, isFocused]);
+
+  useEffect(() => {
+    onPickLocation(pickedLocation);
+    //we use useCallback in PlaceForm to keep functions as dependency
+  }, [onPickLocation, pickedLocation]);
 
   const [locationPermissionInfo, requestPermission] =
     useForegroundPermissions();
