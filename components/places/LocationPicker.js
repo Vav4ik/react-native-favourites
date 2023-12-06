@@ -13,7 +13,7 @@ import {
 
 import { Colors } from "../../constants/colors";
 import OutlinedButton from "../../UI/OutlinedButton";
-import { getMapPreview } from "../../utils/location";
+import { getAddress, getMapPreview } from "../../utils/location";
 
 const LocationPicker = ({ onPickLocation }) => {
   const navigation = useNavigation();
@@ -35,7 +35,16 @@ const LocationPicker = ({ onPickLocation }) => {
   }, [route, isFocused]);
 
   useEffect(() => {
-    onPickLocation(pickedLocation);
+    const handleLocation = async () => {
+      if (pickedLocation) {
+        const address = await getAddress(
+          pickedLocation.lat,
+          pickedLocation.lng
+        );
+        onPickLocation({...pickedLocation, address});
+      }
+    };
+    handleLocation();
     //we use useCallback in PlaceForm to keep functions as dependency
   }, [onPickLocation, pickedLocation]);
 
