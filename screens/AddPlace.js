@@ -5,7 +5,7 @@ const AddPlace = ({ navigation }) => {
   const createPlaceHandler = async (place) => {
     try {
       await insertPlace(place);
-      navigation.navigate("AllPlaces", { place });
+      navigation.navigate("AllPlaces");
     } catch (error) {
       console.log("Problem saving a new place", error);
     }
