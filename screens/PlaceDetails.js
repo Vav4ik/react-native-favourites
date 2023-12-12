@@ -1,24 +1,52 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import OutlinedButton from "../UI/OutlinedButton";
 import { Colors } from "../constants/colors";
+import { fetchPlaceDetails } from "../utils/database";
 
-const PlaceDetails = ({ route }) => {
+const PlaceDetails = ({ navigation, route }) => {
   const selectePlaceId = route.params.placeId;
 
+  const [place, setPlace] = useState();
+
   useEffect(() => {
-    //use selectedLaceId to fetch data for a single place
+    const loadPlaceData = async () => {
+      const selectedPlace = await fetchPlaceDetails(selectePlaceId);
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
+      setPlace(selectedPlace);
+      navigation.setOptions({
+        title: selectedPlace.title,
+      });
+    };
+    if (selectePlaceId) {
+      loadPlaceData();
+    }
   }, [selectePlaceId]);
 
-  const showOnMapHandler = () => {};
+  const showOnMapHandler = () => {
+    if (place) {
+      navigation.navigate("Map", {
+        initialLat: place.location.lat,
+        initialLng: place.location.lng,
+      });
+    }
+  };
+
+  if (!place) {
+    return (
+      <View style={styles.fallback}>
+        <Text style={styles.fallbackText}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView>
-      <Image style={styles.image} />
+      <Image style={styles.image} source={{ uri: place.imageUri }} />
       <View style={styles.locationContainer}>
         <View style={styles.addressContainer}>
-          <Text style={styles.addressText}>ADDRESS</Text>
+          <Text style={styles.addressText}>{place.address}</Text>
         </View>
         <OutlinedButton
           buttonText="View on Map"
@@ -31,6 +59,16 @@ const PlaceDetails = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  fallback: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fallbackText: {
+    color: Colors.primary50,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
   image: {
     height: "35%",
     minHeight: 300,
